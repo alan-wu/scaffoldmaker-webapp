@@ -1,0 +1,14 @@
+.pydevproject
+dist/*
+package-lock.json
+package.json
+morphing/*
+nerves/*
+.project
+.settings
+.tern-project
+node_modules
+build
+src/scaffoldmaker_webapp.egg-info/*
+src/scaffoldmaker_webapp/__pycache__/*
+
