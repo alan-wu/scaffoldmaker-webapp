@@ -332,7 +332,7 @@ app.static('/physiomeportal.js', js_file)
 
 
 def main():
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=6565)
 
 
 if __name__ == '__main__':

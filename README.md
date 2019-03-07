@@ -34,12 +34,12 @@ system level):
 
 ```
 source ../opencmiss/install/virtual_environments/oclibs_venv_py35_release/bin/activate
-cd ../MAPcore-demo/scaffoldmaker_webapp
+cd ../scaffoldmaker-webapp
 pip install -r requirements.txt
 calmjs npm --install scaffoldmaker_webapp[webpack] -D
 python setup.py build
 ```
 
-Then run `portal_web`, which will start the webserver on port
+Then run `scaffoldmaker_webapp`, which will start the webserver on port
 8000 by default.  Open a webbrowser to http://localhost:8000 to use the
 application.

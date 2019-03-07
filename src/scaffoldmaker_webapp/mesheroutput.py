@@ -24,6 +24,9 @@ def getMeshTypeOptions(meshtype):
     if not meshtype_cls:
         return None
     defaultOptions = meshtype_cls.getDefaultOptions()
+    if meshtype == "3d_colon1":
+        defaultOptions['Number of elements around'] = 9
+        defaultOptions['Number of elements along haustra'] = 3
     orderedNames = meshtype_cls.getOrderedOptionNames()
     orderedOptions=collections.OrderedDict()
     orderedOptions.update(defaultOptions)
@@ -85,16 +88,36 @@ class MyScaffold(object):
         material.setAttributeReal3(Material.ATTRIBUTE_DIFFUSE, [0.7, 0.12, 0.1])
         material.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.7, 0.14, 0.11])
         finite_element_field = fieldmodule.findFieldByName('coordinates')
-        for annotationGroup in annotationGroups:
-            groupField = annotationGroup.getGroup()
+        if annotationGroups == None:
+            mesh = fieldmodule.findMeshByDimension(3)
+            groupField = fieldmodule.createFieldGroup()
+            groupField.setSubelementHandlingMode(groupField.SUBELEMENT_HANDLING_MODE_FULL)
+            elementGroupField = groupField.createFieldElementGroup(mesh)
+            meshGroup = elementGroupField.getMeshGroup()
+            groupField.setName("All")
+            iterator = mesh.createElementiterator()
+            element = iterator.next()
+            while element.isValid():
+                meshGroup.addElement(element)
+                element = iterator.next()
             surface = scene.createGraphicsSurfaces()
+            surface.setSubgroupField(groupField)
             tessellation = surface.getTessellation()
-            tessellation.setRefinementFactors([4])
-            if groupField:
-                surface.setSubgroupField(groupField)
+            tessellation.setRefinementFactors([2, 2, 1])
             surface.setCoordinateField(finite_element_field)
             surface.setExterior(True)        
-            surface.setMaterial(material)
+            surface.setMaterial(material)            
+        else:
+            for annotationGroup in annotationGroups:
+                groupField = annotationGroup.getGroup()
+                surface = scene.createGraphicsSurfaces()
+                tessellation = surface.getTessellation()
+                tessellation.setRefinementFactors([4])
+                if groupField:
+                    surface.setSubgroupField(groupField)
+                surface.setCoordinateField(finite_element_field)
+                surface.setExterior(True)        
+                surface.setMaterial(material)
         scene.endChange()
     
     
@@ -181,6 +204,8 @@ class MyScaffold(object):
         groups = meshtype_cls.generateMesh(region, myOptions)
         fieldmodule.defineAllFaces()
         fieldmodule.endChange()
+        if groups == None:
+            return None
         for annotationGroup in groups:
             annotationGroup.addSubelements()
         return groups
@@ -222,7 +247,6 @@ class MyScaffold(object):
         context.getGlyphmodule().defineStandardGlyphs()
         region = context.createRegion()
         self._currentRegion = region
-        print(self._currentRegion)
         defaultOptions.update(options)
         #readTestRegion(region)
         annotations = self.meshGeneration(meshtype_cls, region, defaultOptions)
