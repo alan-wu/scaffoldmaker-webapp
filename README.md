@@ -41,5 +41,5 @@ python setup.py build
 ```
 
 Then run `scaffoldmaker_webapp`, which will start the webserver on port
-8000 by default.  Open a webbrowser to http://localhost:8000 to use the
+6565 by default.  Open a webbrowser to http://localhost:6565 to use the
 application.
