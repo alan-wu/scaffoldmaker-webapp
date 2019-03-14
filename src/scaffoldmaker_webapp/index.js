@@ -13,10 +13,11 @@ var main = function()  {
    * and {@link PJP.ModelPanel}.
    */
   var initialiseMain = function() {
-      var scaffoldViewer = new physiomeportal.ScaffoldViewer();
-      var scaffoldDialog = new physiomeportal.ScaffoldDialog(scaffoldViewer);
+      var scaffoldViewer = new physiomeportal.ScaffoldViewer("3d_heart1");
+      var parent = document.getElementById("MAPcorePortalArea");
+      var scaffoldDialog = new physiomeportal.ScaffoldDialog(scaffoldViewer, parent);
       scaffoldViewer.setName("ScaffoldMaker");
-      scaffoldDialog.setLeft("0");
+      scaffoldDialog.setPosition(0, 0);
       scaffoldDialog.setWidth("100%");
       scaffoldDialog.setHeight("100%");
       scaffoldDialog.destroyModuleOnClose = true;
@@ -24,8 +25,8 @@ var main = function()  {
 
   var initialise = function() {
     initialiseMain();
+    //moduleManager = new physiomeportal.ModuleManager();
   }
-
 
   initialise();
 }

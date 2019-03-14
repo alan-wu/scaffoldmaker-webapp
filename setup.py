@@ -18,7 +18,7 @@ package_json = {
     },
     "devDependencies": {
         "eslint": "~3.15.0",
-        "physiomeportal": "0.3.1alpha",
+        "physiomeportal": "0.3.3alpha",
     }
 }
 

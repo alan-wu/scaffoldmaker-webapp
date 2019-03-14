@@ -329,8 +329,6 @@ app.static('/scaffold.html', html_file)
 js_file = join(dirname(__file__), 'static', 'physiomeportal.js')
 app.static('/physiomeportal.js', js_file)
 
-
-
 def main():
     app.run(host='0.0.0.0', port=6565)
 
