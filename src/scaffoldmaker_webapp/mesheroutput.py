@@ -9,6 +9,7 @@ import collections
 from scaffoldmaker.scaffolds import Scaffolds
 from opencmiss.zinc.context import Context
 from opencmiss.zinc.material import Material
+from scaffoldmaker_webapp import colon_centerLine
 
 meshes = {
     meshtype.__name__[len('MeshType_'):]: meshtype
@@ -58,6 +59,7 @@ class MyScaffold(object):
         self._currentOptions = None
         self._currentMeshType = None
         self._currentLandmarks = []
+        self._centerLine = None
     
     def createCylindeLineGraphics(self, context, region):
         '''create cylinders which outline the shapes of the heart'''
@@ -88,6 +90,8 @@ class MyScaffold(object):
         material.setAttributeReal3(Material.ATTRIBUTE_DIFFUSE, [0.7, 0.12, 0.1])
         material.setAttributeReal3(Material.ATTRIBUTE_AMBIENT, [0.7, 0.14, 0.11])
         finite_element_field = fieldmodule.findFieldByName('coordinates')
+        texCoord = fieldmodule.findFieldByName('textureCoordinates')
+        
         if annotationGroups == None:
             mesh = fieldmodule.findMeshByDimension(3)
             groupField = fieldmodule.createFieldGroup()
@@ -106,7 +110,10 @@ class MyScaffold(object):
             tessellation.setRefinementFactors([2, 2, 1])
             surface.setCoordinateField(finite_element_field)
             surface.setExterior(True)        
-            surface.setMaterial(material)            
+            surface.setMaterial(material)
+            if texCoord:
+                surface.setTextureCoordinateField(texCoord)
+                print(texCoord)
         else:
             for annotationGroup in annotationGroups:
                 groupField = annotationGroup.getGroup()
@@ -118,6 +125,8 @@ class MyScaffold(object):
                 surface.setCoordinateField(finite_element_field)
                 surface.setExterior(True)        
                 surface.setMaterial(material)
+                if texCoord:
+                    surface.setTextureCoordinateField(texCoord)  
         scene.endChange()
     
     
@@ -140,7 +149,7 @@ class MyScaffold(object):
         scene.write(sceneSR)
         # Write out each resource into their own file
     
-        return [resources[i].getBuffer()[1] for i in range(number)]
+        return [resources[i].getBuffer()[1].decode('utf-8') for i in range(number)]
     
     
     def finaliseOptions(self, meshtype_cls, provided_options):
@@ -202,6 +211,7 @@ class MyScaffold(object):
         myOptions = self.finaliseOptions(meshtype_cls, options)
         self._currentOptions = myOptions
         groups = meshtype_cls.generateMesh(region, myOptions)
+        self._centerLine = colon_centerLine.getCenterLine(options)
         fieldmodule.defineAllFaces()
         fieldmodule.endChange()
         if groups == None:
@@ -209,6 +219,9 @@ class MyScaffold(object):
         for annotationGroup in groups:
             annotationGroup.addSubelements()
         return groups
+    
+    def getCenterLine(self):
+        return self._centerLine
     
     def getPredefinedLandmarks(self):
         if self._currentRegion:
@@ -257,7 +270,8 @@ class MyScaffold(object):
         tessellation.setMinimumDivisions(1)
     
         self.createSurfaceGraphics(context, region, annotations)
-        self.createCylindeLineGraphics(context, region)
+        if meshtype != "3d_colon1":
+            self.createCylindeLineGraphics(context, region)
         # Export graphics into JSON format
         return self.exportWebGLJson(region)
     

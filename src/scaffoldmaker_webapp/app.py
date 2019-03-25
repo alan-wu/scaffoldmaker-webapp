@@ -84,6 +84,17 @@ async def resume(request):
 async def output(request, resource_id):
     return json(store.query_resource(resource_id))
 
+@app.route('/getCenterLine')
+async def getCenterLine(request):
+    mySession = None
+    try:
+        mySession = getMySession(request)
+    except Exception as e:
+        logger.exception('error getting center lione')
+        return json({'error': 'error getting center line: ' + str(e)}, status=400)
+    centerLine = mySession.scaffold.getCenterLine()
+    return json(centerLine)
+
 @app.route('/getPredefinedLandmarks')
 async def getPredefinedLandmarks(request):
     mySession = None

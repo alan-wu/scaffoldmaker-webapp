@@ -20,6 +20,7 @@ var main = function()  {
       scaffoldDialog.setPosition(0, 0);
       scaffoldDialog.setWidth("100%");
       scaffoldDialog.setHeight("100%");
+      scaffoldDialog.hideCloseButton();
       scaffoldDialog.destroyModuleOnClose = true;
   }
 
